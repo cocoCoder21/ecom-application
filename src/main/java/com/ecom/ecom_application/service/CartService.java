@@ -62,7 +62,7 @@ public class CartService {
         Optional<Product> productOpt =  productsRepository.findById(productId);
         Optional<User> userOpt = usersRepository.findById(Long.valueOf(userId));
 
-        if (productOpt.isPresent() || userOpt.isPresent()){
+        if (productOpt.isPresent() && userOpt.isPresent()){
             cartItemRepository.deleteByUserAndProduct(userOpt.get(), productOpt.get());
             return true;
         }
@@ -73,5 +73,11 @@ public class CartService {
         return usersRepository.findById(Long.valueOf(userId))
                 .map(cartItemRepository::findByUser)
                 .orElseGet(List::of);
+    }
+
+    public void clearCart(String userId) {
+        usersRepository.findById(Long.valueOf(userId))
+                .ifPresent(cartItemRepository::deleteByUser);
+
     }
 }
